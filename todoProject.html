@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project5 TodoList Application</title>
+    <link rel="stylesheet" href="/javascript-starter-file-p-1/WorldBestJSCourse/windows/style.css">
+</head>
+<body>
+    <h1>Todo List</h1>
+    <br/>
+    <form>
+        <div>
+            <input type="text" id="inputValue" placeholder="Write Something...">
+            <button class="btn">Add Todo</button>
+        </div>
+        <section class="todo-lists-elem">
+           
+        </section>
+    </form>
+
+
+
+
+<script>
+
+    const myBtn = document.querySelector('.btn');
+    const inputValue = document.getElementById('inputValue');
+    const mainTodoElem = document.querySelector('.todo-lists-elem');//todolist jyare add button click kariee tyare ahiya value dekhase aa area ma
+
+    const getTodoListFromLocal = () => {                                //localstorage ma vastu ne get karva mate
+        return JSON.parse(localStorage.getItem('todoListData'));        //string mathi value ne object ma convert kari che
+
+    };
+
+    const addTodoListLocalStorage = (localTodoList) => {
+        return localStorage.setItem("todoListData", JSON.stringify(localTodoList));
+    }
+
+    localTodoList = getTodoListFromLocal() || [];                       //function call karyu che get value karva mate ane empty array api didhu jo kai value get na thay to array ma push thay
+
+
+    const addTodoDynamicElement = (curEle) => {                         //local storage ma je value store hati ene web page ma batava mate section ma
+    
+        const divElement = document.createElement('div');                   // div element create karva
+        divElement.classList.add('main_todo_div');                          //div ni andar class banava
+        divElement.innerHTML = `<li>${curEle}</li><button class='deleteBtn'>Delete</button>`;//div ni andar ni value ke list jova
+        const resultData = mainTodoElem.append(divElement);                 // apeend kariee tojj browzer uper dekhay
+           
+    }
+
+
+                                                                            // let localTodoList = [];//empty array banavyo che data push karva pachi local storage ma store karva value and store karya pachi value store rey delete na that refresh karya pachi pan
+    addTodoList = (e) => {                                                  // function banavyu ee ahiya che use and e eni value apeli che
+        e.preventDefault();                                                 // aa na lakhiee to console ma vastu na dekhay jyare form use kariyu hoi tyare
+        const inputListValue = inputValue.value.trim();                     //space ne clear delete karva mate
+        
+        inputValue.value = "";                                              //jyare value kakhi enter kariee tyare text box clear thay jay
+            
+
+    if( inputListValue !== "" && !localTodoList.includes(inputListValue) ) {
+
+        localTodoList.push(inputListValue);                                 // array ma push karva mate
+        console.log(localTodoList);
+        localTodoList = [...new Set(localTodoList)];                        //unique array value male ena mate not get repeating value
+        console.log(localTodoList);
+        localStorage.setItem('todoListData',JSON.stringify(localTodoList)); // value localstorage ma set karva ane pachi ee value ne agad web page per batava mate
+            
+        addTodoDynamicElement(inputListValue);                              // nicheni value ni jagyaye function lagavi didhu
+        
+        //     const divElement = document.createElement('div');// div element create karva
+        //     divElement.classList.add('main_todo_div');//div ni andar class banava
+        //     divElement.innerHTML = `<li>${inputValue.value}</li><button class='deleteBtn'>Delete</button>`;//div ni andar ni value ke list jova
+        //    const resultData = mainTodoElem.append(divElement);// apeend kariee tojj browzer uper dekhay
+           
+    }
+}
+       
+
+    const showTodoList = () => {
+        console.log(localTodoList);
+
+        localTodoList.forEach((curEle) => {                                     // unique value find karva array mathi
+            addTodoDynamicElement(curEle);
+        });
+    }
+        
+    showTodoList();                                                             // unique value ne show kare section ma
+
+    
+    const removeTodoElem = (e)=> {                                              //remove karva mate function
+        const todoTORemove = e.target;
+        let todoListContent = todoTORemove.previousElementSibling.innerText;       //delete button na je najik na sibling hoi tene target karine delete karvani value
+        let parentElem = todoTORemove.parentElement;                            //parentelement per thi apne child etle ke delete button ne target kari sakiee ane delete value each kari sakiee
+        console.log(todoListContent);
+
+            
+        localTodoList = localTodoList.filter((curTodo) => {
+            return curTodo !== todoListContent.toLowerCase();                   //filter karine ne jove ke curtodo ma ee value che jee apne value delete kariee che same na hoi to return kare nito remove kare
+        });
+       
+        addTodoListLocalStorage(localTodoList);
+        parentElem.remove();                                                    // delete kare jyare button click kariee but parent per game tya click kariee to na kare khali button per kariee tyare jj kare
+        console.log(localTodoList);
+    }
+
+        
+    mainTodoElem.addEventListener('click', (e)=> {                              //button click kari value delete karva mate
+        e.preventDefault();
+            
+        if(e.target.classList.contains('deleteBtn')){                           //khali delete button per click kariee tyare jj delete thavu joiee
+            removeTodoElem(e);                                                  // remove value mate function chalavyu che
+        }
+
+    });
+
+        
+    myBtn.addEventListener('click',(e) => {                                     //button click karie tyare
+        addTodoList(e);                                                         //function banavyu che
+    });
+
+</script>
+
+</body>
+</html>
